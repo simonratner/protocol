@@ -222,6 +222,9 @@
                      32-bit words, like Ethernet.
     numbers=<Y/N>  : Instructs protocol to print or avoid printing the bit
                      counts on top of the header.
+    startbit=<n>   : Instructs protocol to start numbering bits from this value.
+                     This is useful for protocols that traditionally use 1-based
+                     bit numbering, or for rendering partial protocol fragments.
     evenchar=<c>   : Instructs protocol to use the supplied character, instead
                      of the default "-" as the character in even positions of
                      the horizontal lines.
@@ -424,6 +427,14 @@
     +                          Message Body                         +
     |                                                               |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+    $ ./protocol "Length:16,Checksum:16?startbit=32,startchar=~"
+     3               4                   5                   6
+     2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
+    ~-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |             Length            |            Checksum           |
+    ~-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 
  0x06 - CONTACT, SUPPORT AND BUG REPORTING

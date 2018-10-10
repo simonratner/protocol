@@ -94,6 +94,7 @@ class Protocol():
         self.hdr_char_fill_even="-"            # Fill character for border even positions
         self.hdr_char_sep="|"                  # Field separator character
         self.bits_per_line=32                  # Number of bits per line
+        self.bits_start_from=0                 # Index to start numbering bits from
         self.do_print_top_tens=True            # True: print top numbers for bit tens
         self.do_print_top_units=True           # True: print top numbers for bit units
         self.field_list=[]                     # Header fields to be printed out
@@ -152,6 +153,10 @@ class Protocol():
                             self.do_print_top_units=True
                         else:
                             raise ProtocolException("FATAL: Invalid value for 'numbers' option (%s)" % value)
+                    elif var.lower()=="startbit":
+                        self.bits_start_from=int(value)
+                        if self.bits_start_from<0:
+                            raise ProtocolException("FATAL: Invalid value for 'startbit' option (%s)" % value)
                     elif var.lower() in ["oddchar", "evenchar", "startchar", "endchar", "sepchar"]:
                         if len(value)>1 or len(value)<=0:
                             raise ProtocolException("FATAL: Invalid value for '%s' option (%s)" % (var, value))
@@ -184,18 +189,18 @@ class Protocol():
         """
         lines=["", ""]
         if self.do_print_top_tens is True:
-            for i in range(0, self.bits_per_line):
-                if str(i)[-1:]=="0":
-                    lines[0]+=" %s" % str(i)[0]
+            for i in range(self.bits_start_from, self.bits_start_from+self.bits_per_line):
+                if str(i)[-1:]=="0" or i==self.bits_start_from:
+                    lines[0]+=" %s" % (i>=10 and str(i)[0] or "0")
                 else:
                     lines[0]+="  "
             lines[0]+="\n"
         if self.do_print_top_units is True:
-            for i in range(0, self.bits_per_line):
+            for i in range(self.bits_start_from, self.bits_start_from+self.bits_per_line):
                 lines[1]+=" %s" % str(i)[-1:]
             #lines[1]+="\n"
         result = "".join(lines)
-        return  result if len(result)>0 else None
+        return result if len(result)>0 else None
 
 
     def _get_horizontal(self, width=None):
